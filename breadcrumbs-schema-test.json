@@ -37,6 +37,7 @@
             "type": "string",
             "enum": [
               "conversion",
+              "preupgrade",
               "upgrade"
             ],
             "description": "Type of migration activity"
