@@ -1,8 +1,8 @@
 {
   "definitions": {},
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://example.com/object1628676489.json",
-  "title": "Migrations file schema v1",
+  "$id": "https://raw.githubusercontent.com/oamg/schema-test/main/breadcrumbs-schema-test.json",
+  "title": "Migrations File Schema",
   "type": "object",
   "required": [
     "activities"

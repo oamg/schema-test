@@ -1,9 +1,9 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "http://example.com/example.json",
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "https://raw.githubusercontent.com/oamg/schema-test/main/repomap-schema-test.json",
     "type": "object",
-    "title": "The repository mapping schema",
-    "description": "The root schema comprises the entire JSON document.",
+    "title": "Repository Mapping Schema",
+    "description": "Repository mapping for OS migrations",
     "version": "1.0.0",
     "required": [
         "datetime",
