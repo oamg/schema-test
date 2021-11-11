@@ -1,0 +1,119 @@
+{
+  "$id": "https://raw.githubusercontent.com/oamg/schema-test/main/pes-events-schema-test.json",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Package Evolution Service - Events",
+  "type": "array",
+  "items": [
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "integer",
+          "description": "0 = Removal, 1 = Presence, 2 = Deprecation, 3 = Replacement, 4 = Split, 5 = Merge, 6 = Move, 7 = Rename"
+        },
+        "id": {
+          "type": "integer",
+          "description": "Unique ID of the event, used for debugging"
+        },
+        "release": {
+          "type": "object",
+          "description": "Release object describing when the event happened",
+          "properties": {
+            "major_version": {
+              "type": "integer",
+              "description": "Major version of the release"
+            },
+            "os_name": {
+              "type": "string",
+              "description": "Name of the operating system release"
+            },
+            "minor_version": {
+              "type": "integer",
+              "description": "Minor version of the release"
+            }
+          },
+          "required": [
+            "major_version",
+            "os_name",
+            "minor_version"
+          ]
+        },
+        "in_packageset": {
+          "type": "object",
+          "description": "Describes one or more input packages, depending on the type of the event",
+          "properties": {
+            "package": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "repository": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "repository"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "package"
+          ]
+        },
+        "out_packageset": {
+          "type": "object",
+          "description": "Describes one or more output packages, depending on the type of the event",
+          "properties": {
+            "package": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "repository": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "repository"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "package"
+          ]
+        },
+        "architectures": {
+          "type": "array",
+          "description": "Describes all applicable architectures for the event",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "action",
+        "id",
+        "release",
+        "in_packageset",
+        "out_packageset",
+        "architectures"
+      ]
+    }
+  ]
+}
