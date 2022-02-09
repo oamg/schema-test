@@ -76,11 +76,29 @@
                     },
                     "repository": {
                       "type": "string"
+                    },
+                    "modulestreams": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": ["object", "null"],
+                          "description": "Describes the modules the package is located in",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "stream": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      ]
                     }
                   },
                   "required": [
                     "name",
-                    "repository"
+                    "repository",
+                    "modulestreams"
                   ]
                 }
               ]
@@ -105,11 +123,29 @@
                     },
                     "repository": {
                       "type": "string"
+                    },
+                    "modulestreams": {
+                      "type": "array",
+                      "description": "Describes the modules the package is located in",
+                      "items": [
+                        {
+                          "type": ["object", "null"],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "stream": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      ]
                     }
                   },
                   "required": [
                     "name",
-                    "repository"
+                    "repository",
+                    "modulestreams"
                   ]
                 }
               ]
@@ -117,6 +153,45 @@
           },
           "required": [
             "package"
+          ]
+        },
+        "modulestream_maps": {
+          "type": "array",
+          "description": "Describes the upgraded path of the specified modules",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "in_modulestream": {
+                  "type": ["object", "null"],
+                  "description": "Describes the module:stream of the initial release",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "stream": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "out_modulestream": {
+                  "type": ["object", "null"],
+                  "description": "Describes the module:stream of the target release",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "stream": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "in_modulestream",
+                "out_modulestream"
+              ]
+            }
           ]
         },
         "architectures": {
@@ -136,6 +211,7 @@
         "release",
         "in_packageset",
         "out_packageset",
+        "modulestream_maps",
         "architectures"
       ]
     }
