@@ -15,6 +15,29 @@
           "type": "integer",
           "description": "Unique ID of the event, used for debugging"
         },
+        "initial_release": {
+          "type": "object",
+          "description": "Describes last release in which packages existed before the event happaned",
+          "properties": {
+            "major_version": {
+              "type": "integer",
+              "description": "Major version of the release"
+            },
+            "os_name": {
+              "type": "string",
+              "description": "Name of the operating system release"
+            },
+            "minor_version": {
+              "type": "integer",
+              "description": "Minor version of the release"
+            }
+          },
+          "required": [
+            "major_version",
+            "os_name",
+            "minor_version"
+          ]
+        },
         "release": {
           "type": "object",
           "description": "Release object describing when the event happened",
@@ -109,6 +132,7 @@
       "required": [
         "action",
         "id",
+        "initial_release",
         "release",
         "in_packageset",
         "out_packageset",
