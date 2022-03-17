@@ -1,0 +1,97 @@
+{
+    "$id": "https://raw.githubusercontent.com/oamg/schema-test/main/pes-events-schema-test.json",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/DDDD",
+    "title": "Device and Driver Deprecation Data",
+    "definitions": {
+        "DDDD": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Datum"
+                    }
+                }
+            },
+            "required": [
+                "data"
+            ],
+            "title": "List of device and driver deprecation entries"
+        },
+        "Datum": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "available_in_rhel": {
+                    "type": "array",
+                    "description": "List of major version numbers in which the device/driver is available (not necessarily maintained)",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "deprecation_announced": {
+                    "type": "string",
+                    "description": "In which release was the deprecation announced",
+                    "examples": [
+                        "8.4",
+                        "7.9",
+                        "10.0"
+                    ]
+                },
+                "device_id": {
+                    "description": "Device specific identifier string",
+                    "examples": [
+                        "0x15B3:0x1002",
+                        "aarch64:Ampere:NeoverseN1",
+                        "ppc64le:ibm:4d:*",
+                        "s390x:ibm:3907:*",
+                        "x86_64:amd:23:{1,17,49}",
+                        "x86_64:intel:6:95",
+                        "x86_64:intel:6:[1-3]",
+                        "x86_64:intel:6:{[1-3],[5-99],[127-255]}",
+                        "0x1028:0x0002:0x1028:0x00d9"
+                    ],
+                    "type": "string"
+                },
+                "device_name": {
+                    "type": "string",
+                    "description": "Name of the device, human readable non parsable"
+                },
+                "device_type": {
+                    "$ref": "#/definitions/DeviceType"
+                },
+                "driver_name": {
+                    "type": "string",
+                    "description": "Name of the driver"
+                },
+                "maintained_in_rhel": {
+                    "type": "array",
+                    "description": "List of major versions in which the device is actively maintained (speak supported)",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "required": [
+                "available_in_rhel",
+                "deprecation_announced",
+                "device_id",
+                "device_name",
+                "device_type",
+                "driver_name",
+                "maintained_in_rhel"
+            ],
+            "title": "Device or Driver Deprecation information"
+        },
+        "DeviceType": {
+            "type": "string",
+            "enum": [
+                "pci",
+                "cpu"
+            ],
+            "title": "DeviceType"
+        }
+    }
+}
