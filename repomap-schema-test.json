@@ -255,7 +255,8 @@
                 "rhui": {
                     "enum": [
                         "aws",
-                        "azure"
+                        "azure",
+                        "google"
                     ]
                 }
             }
