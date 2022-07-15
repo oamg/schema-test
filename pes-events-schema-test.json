@@ -3,19 +3,18 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Package Evolution Service - Events",
   "type": "array",
-  "items": [
-    {
-      "type": "object",
-      "properties": {
-        "action": {
-          "type": "integer",
-          "description": "0 = Removal, 1 = Presence, 2 = Deprecation, 3 = Replacement, 4 = Split, 5 = Merge, 6 = Move, 7 = Rename"
-        },
-        "id": {
-          "type": "integer",
-          "description": "Unique ID of the event, used for debugging"
-        },
-        "initial_release": {
+  "items": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "integer",
+        "description": "0 = Removal, 1 = Presence, 2 = Deprecation, 3 = Replacement, 4 = Split, 5 = Merge, 6 = Move, 7 = Rename"
+      },
+      "id": {
+        "type": "integer",
+        "description": "Unique ID of the event, used for debugging"
+      },
+      "initial_release": {
           "type": "object",
           "description": "Describes last release in which packages existed before the event happaned",
           "properties": {
@@ -38,189 +37,143 @@
             "minor_version"
           ]
         },
-        "release": {
+      "release": {
+        "type": "object",
+        "description": "Release object describing when the event happened",
+        "properties": {
+          "major_version": {
+            "type": "integer",
+            "description": "Major version of the release"
+          },
+          "os_name": {
+            "type": "string",
+            "description": "Name of the operating system release"
+          },
+          "minor_version": {
+            "type": "integer",
+            "description": "Minor version of the release"
+          }
+        },
+        "required": [
+          "major_version",
+          "os_name",
+          "minor_version"
+        ]
+      },
+      "in_packageset": {
+        "type": "object",
+        "description": "Describes one or more input packages, depending on the type of the event",
+        "properties": {
+          "package": {
+            "$ref": "#/$defs/package"
+          }
+        },
+        "required": [
+          "package"
+        ]
+      },
+      "out_packageset": {
+        "anyOf": [{
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "Describes one or more output packages, depending on the type of the event",
+        "properties": {
+          "package": {
+            "$ref": "#/$defs/package"
+          }
+        },
+        "required": [
+          "package"
+        ]
+      },
+      "modulestream_maps": {
+        "type": "array",
+        "description": "Describes the upgraded path of the specified modules",
+        "items": {
           "type": "object",
-          "description": "Release object describing when the event happened",
           "properties": {
-            "major_version": {
-              "type": "integer",
-              "description": "Major version of the release"
+            "in_modulestream": {
+              "$ref": "#/$defs/modulestream"
             },
-            "os_name": {
-              "type": "string",
-              "description": "Name of the operating system release"
-            },
-            "minor_version": {
-              "type": "integer",
-              "description": "Minor version of the release"
+            "out_modulestream": {
+              "$ref": "#/$defs/modulestream"
             }
           },
           "required": [
-            "major_version",
-            "os_name",
-            "minor_version"
-          ]
-        },
-        "in_packageset": {
-          "type": "object",
-          "description": "Describes one or more input packages, depending on the type of the event",
-          "properties": {
-            "package": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "repository": {
-                      "type": "string"
-                    },
-                    "modulestreams": {
-                      "type": "array",
-                      "items": [
-                        {
-                          "type": ["object", "null"],
-                          "description": "Describes the modules the package is located in",
-                          "properties": {
-                            "name": {
-                              "type": "string"
-                            },
-                            "stream": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  "required": [
-                    "name",
-                    "repository",
-                    "modulestreams"
-                  ]
-                }
-              ]
-            }
-          },
-          "required": [
-            "package"
-          ]
-        },
-        "out_packageset": {
-          "anyOf": [
-            {
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "description": "Describes one or more output packages, depending on the type of the event",
-          "properties": {
-            "package": {
-              "type": "array",
-              "items": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "repository": {
-                      "type": "string"
-                    },
-                    "modulestreams": {
-                      "type": "array",
-                      "description": "Describes the modules the package is located in",
-                      "items": [
-                        {
-                          "type": ["object", "null"],
-                          "properties": {
-                            "name": {
-                              "type": "string"
-                            },
-                            "stream": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  "required": [
-                    "name",
-                    "repository",
-                    "modulestreams"
-                  ]
-                }
-              ]
-            }
-          },
-          "required": [
-            "package"
-          ]
-        },
-        "modulestream_maps": {
-          "type": "array",
-          "description": "Describes the upgraded path of the specified modules",
-          "items": [
-            {
-              "type": "object",
-              "properties": {
-                "in_modulestream": {
-                  "type": ["object", "null"],
-                  "description": "Describes the module:stream of the initial release",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "stream": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "out_modulestream": {
-                  "type": ["object", "null"],
-                  "description": "Describes the module:stream of the target release",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "stream": {
-                      "type": "string"
-                    }
-                  }
-                }
-              },
-              "required": [
-                "in_modulestream",
-                "out_modulestream"
-              ]
-            }
-          ]
-        },
-        "architectures": {
-          "type": "array",
-          "description": "Describes all applicable architectures for the event",
-          "items": [
-            {
-              "type": "string"
-            }
+            "in_modulestream",
+            "out_modulestream"
           ]
         }
       },
+      "architectures": {
+        "type": "array",
+        "description": "Describes all applicable architectures for the event",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "action",
+      "id",
+      "initial_release",
+      "release",
+      "in_packageset",
+      "out_packageset",
+      "modulestream_maps",
+      "architectures"
+    ]
+  },
+  "$defs": {
+    "modulestream": {
+      "description": "Describes the module:stream object",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "stream": {
+          "type": "string"
+        }
+      },
       "required": [
-        "action",
-        "id",
-        "initial_release",
-        "release",
-        "in_packageset",
-        "out_packageset",
-        "modulestream_maps",
-        "architectures"
+        "name",
+        "stream"
       ]
+    },
+    "package": {
+      "description": "List of packages belonging to a packageset",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          },
+          "modulestreams": {
+            "type": "array",
+            "description": "Describes the modules the package is located in",
+            "items": {
+              "$ref": "#/$defs/modulestream"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "repository",
+          "modulestreams"
+        ]
+      }
     }
-  ]
+  }
 }
