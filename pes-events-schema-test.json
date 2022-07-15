@@ -109,7 +109,14 @@
           ]
         },
         "out_packageset": {
-          "type": "object",
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
           "description": "Describes one or more output packages, depending on the type of the event",
           "properties": {
             "package": {
