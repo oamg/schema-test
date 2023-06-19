@@ -2,133 +2,156 @@
   "$id": "https://raw.githubusercontent.com/oamg/schema-test/main/pes-events-schema-test.json",
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Package Evolution Service - Events",
-  "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "action": {
-        "type": "integer",
-        "description": "0 = Removal, 1 = Presence, 2 = Deprecation, 3 = Replacement, 4 = Split, 5 = Merge, 6 = Move, 7 = Rename"
-      },
-      "id": {
-        "type": "integer",
-        "description": "Unique ID of the event, used for debugging"
-      },
-      "initial_release": {
-          "type": "object",
-          "description": "Describes last release in which packages existed before the event happaned",
-          "properties": {
-            "major_version": {
-              "type": "integer",
-              "description": "Major version of the release"
-            },
-            "os_name": {
-              "type": "string",
-              "description": "Name of the operating system release"
-            },
-            "minor_version": {
-              "type": "integer",
-              "description": "Minor version of the release"
-            }
-          },
-          "required": [
-            "major_version",
-            "os_name",
-            "minor_version"
-          ]
-        },
-      "release": {
-        "type": "object",
-        "description": "Release object describing when the event happened",
-        "properties": {
-          "major_version": {
-            "type": "integer",
-            "description": "Major version of the release"
-          },
-          "os_name": {
-            "type": "string",
-            "description": "Name of the operating system release"
-          },
-          "minor_version": {
-            "type": "integer",
-            "description": "Minor version of the release"
-          }
-        },
-        "required": [
-          "major_version",
-          "os_name",
-          "minor_version"
+  "type": "object",
+  "required": [
+    "legal_notice",
+    "timestamp",
+    "packageinfo",
+    "provided_data_streams"
+  ],
+  "properties": {
+    "legal_notice": {
+      "type": "string",
+      "title": "Just a legal notice...",
+      "examples": ["Copyright YYYY ...."]
+    },
+    "timestamp": {
+        "type": "string",
+        "title": "The datetime of the last data update.",
+        "description": "The expected format: YYYYMMDDhhmmZ (date -u \"+%Y%m%d%H%MZ\")",
+        "pattern": "^[0-9]{12}Z$",
+        "examples": [
+            "202107141655Z"
         ]
-      },
-      "in_packageset": {
+    },
+    "provided_data_streams": {
+      "type": "array",
+      "title": "The list of data streams provided by this data file.",
+      "description": "Data streams is list of X.Y strings where X is mandatory is saying with what leapp-repository packages the data is compatible, Y is more informative for easier data identification..",
+      "examples": [
+        ["1.0"],
+        ["1.2", "2.0"]
+      ],
+      "items": {
+        "type": "string",
+        "title": "Provided data stream",
+        "pattern": "^[1-9][0-9]*.[0-9]+$",
+        "examples": ["1.0", "1.1", "2.5", "10.100"]
+      }
+    },
+    "packageinfo": {
+      "type": "array",
+      "title": "List of PES events",
+      "items": {
         "type": "object",
-        "description": "Describes one or more input packages, depending on the type of the event",
-        "properties": {
-          "package": {
-            "$ref": "#/$defs/package"
-          }
-        },
+        "title": "The PES event",
+        "description": "The PES event describes what happened with package(s).",
         "required": [
-          "package"
-        ]
-      },
-      "out_packageset": {
-        "anyOf": [{
-            "type": "object"
-          },
-          {
-            "type": "null"
-          }
+          "action",
+          "id",
+          "initial_release",
+          "release",
+          "in_packageset",
+          "out_packageset",
+          "modulestream_maps",
+          "architectures"
         ],
-        "description": "Describes one or more output packages, depending on the type of the event",
         "properties": {
-          "package": {
-            "$ref": "#/$defs/package"
-          }
-        },
-        "required": [
-          "package"
-        ]
-      },
-      "modulestream_maps": {
-        "type": "array",
-        "description": "Describes the upgraded path of the specified modules",
-        "items": {
-          "type": "object",
-          "properties": {
-            "in_modulestream": {
-              "$ref": "#/$defs/modulestream"
+          "action": {
+            "type": "integer",
+            "title": "Type (action) of the PES event representing what is happening with the package.",
+            "description": "0 = Removal, 1 = Presence, 2 = Deprecation, 3 = Replacement, 4 = Split, 5 = Merge, 6 = Move, 7 = Rename"
+          },
+          "id": {
+            "type": "integer",
+            "description": "Unique ID of the event, used for debugging"
+          },
+          "initial_release": {
+                "$ref": "#/$defs/generic_release",
+                "type": [ "null", "object" ],
+                "title": "The initial release from which package(s) evolved.",
+                "description": "It is used when the event needs to refer against which release the change happens. E.g. in case of removal it's null as is not important."
+          },
+          "release": {
+            "$ref": "#/$defs/generic_release",
+            "type": "object",
+            "title": "The release in which the change happened.",
+            "description": "E.g. if package has been removed in RHEL 8.0, set the release RHEL 8.0"
+          },
+          "in_packageset": {
+            "type": "object",
+            "description": "Describes one or more input packages, depending on the type of the event",
+            "properties": {
+              "package": {
+                "$ref": "#/$defs/package"
+              }
             },
-            "out_modulestream": {
-              "$ref": "#/$defs/modulestream"
+            "required": [
+              "package"
+            ]
+          },
+          "out_packageset": {
+            "type": [ "null", "object" ],
+            "description": "Describes one or more output packages, depending on the type of the event",
+            "properties": {
+              "package": {
+                "$ref": "#/$defs/package"
+              }
+            },
+            "required": [
+              "package"
+            ]
+          },
+          "modulestream_maps": {
+            "type": "array",
+            "description": "Describes the upgraded path of the specified modules",
+            "items": {
+              "type": "object",
+              "properties": {
+                "in_modulestream": { "$ref": "#/$defs/modulestream" },
+                "out_modulestream": { "$ref": "#/$defs/modulestream" }
+              },
+              "required": [
+                "in_modulestream",
+                "out_modulestream"
+              ]
             }
           },
-          "required": [
-            "in_modulestream",
-            "out_modulestream"
-          ]
+          "architectures": {
+            "type": "array",
+            "description": "Describes all applicable architectures for the event",
+            "items": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "architectures": {
-        "type": "array",
-        "description": "Describes all applicable architectures for the event",
-        "items": {
-          "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "generic_release": {
+      "title": "Represents a release of a specified operating system.",
+      "required": [
+        "os_name",
+        "major_version",
+        "minor_version"
+      ],
+      "properties": {
+        "os_name": {
+          "type": "string",
+          "description": "Name of the operating system release",
+          "examples": ["RHEL", "Fedora", "Centos"]
+        },
+        "major_version": {
+          "type": "integer",
+          "description": "Major version of the release"
+        },
+        "minor_version": {
+          "type": "integer",
+          "description": "Minor version of the release"
         }
       }
     },
-    "required": [
-      "action",
-      "id",
-      "initial_release",
-      "release",
-      "in_packageset",
-      "out_packageset",
-      "modulestream_maps",
-      "architectures"
-    ]
-  },
-  "$defs": {
     "modulestream": {
       "description": "Describes the module:stream object",
       "type": [
@@ -136,12 +159,8 @@
         "null"
       ],
       "properties": {
-        "name": {
-          "type": "string"
-        },
-        "stream": {
-          "type": "string"
-        }
+        "name": { "type": "string" },
+        "stream": { "type": "string" }
       },
       "required": [
         "name",
@@ -149,16 +168,24 @@
       ]
     },
     "package": {
-      "description": "List of packages belonging to a packageset",
+      "description": "List of binary packages belonging to a packageset",
       "type": "array",
       "items": {
         "type": "object",
+        "required": [
+          "name",
+          "repository",
+          "modulestreams"
+        ],
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "title": "The name of the binary RPM."
           },
           "repository": {
-            "type": "string"
+            "type": "string",
+            "title": "The PES ID used in the PES database.",
+            "description": "The PES ID refers to a set of repositories which represent alternatives of one repository. E.g. BaseOS has a little different repository ID for every architecture, channel, ..."
           },
           "modulestreams": {
             "type": "array",
@@ -167,12 +194,7 @@
               "$ref": "#/$defs/modulestream"
             }
           }
-        },
-        "required": [
-          "name",
-          "repository",
-          "modulestreams"
-        ]
+        }
       }
     }
   }
