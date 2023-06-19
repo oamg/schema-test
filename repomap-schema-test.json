@@ -4,17 +4,19 @@
     "type": "object",
     "title": "Repository Mapping Schema",
     "description": "Repository mapping for OS migrations",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "required": [
         "datetime",
         "version_format",
         "mapping",
-        "repositories"
+        "repositories",
+        "provided_data_streams"
     ],
     "examples": [
         {
           "datetime": "202107141655Z",
-          "version_format": "1.0.0",
+          "version_format": "1.1.0",
+          "provided_data_streams": ["1.0", "2.0"],
           "mapping": [
             {
               "source_major_version": "7",
@@ -81,7 +83,22 @@
             ]
         },
         "version_format": {
-            "const": "1.0.0"
+            "const": "1.1.0"
+        },
+        "provided_data_streams": {
+          "type": "array",
+          "title": "The list of data streams provided by this data file.",
+          "description": "Data streams is list of X.Y strings where X is mandatory is saying with what leapp-repository packages the data is compatible, Y is more informative for easier data identification..",
+          "examples": [
+            ["1.0"],
+            ["1.2", "2.0"]
+          ],
+          "items": {
+            "type": "string",
+            "title": "Provided data stream",
+            "pattern": "^[1-9][0-9]*.[0-9]+$",
+            "examples": ["1.0", "1.1", "2.5", "10.100"]
+          }
         },
         "mapping": {
             "type": "array",
