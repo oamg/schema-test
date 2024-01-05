@@ -38,7 +38,8 @@
             "enum": [
               "conversion",
               "preupgrade",
-              "upgrade"
+              "upgrade",
+              "analysis"
             ],
             "description": "Type of migration activity"
           },
