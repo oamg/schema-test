@@ -4,17 +4,11 @@
   "title": "Package Evolution Service - Events",
   "type": "object",
   "required": [
-    "legal_notice",
     "timestamp",
     "packageinfo",
     "provided_data_streams"
   ],
   "properties": {
-    "legal_notice": {
-      "type": "string",
-      "title": "Just a legal notice...",
-      "examples": ["Copyright YYYY ...."]
-    },
     "timestamp": {
         "type": "string",
         "title": "The datetime of the last data update.",
