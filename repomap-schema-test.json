@@ -4,7 +4,7 @@
     "type": "object",
     "title": "Repository Mapping Schema",
     "description": "Repository mapping for OS migrations",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "required": [
         "datetime",
         "version_format",
@@ -266,7 +266,8 @@
                         "e4s",
                         "aus",
                         "tus",
-                        "beta"
+                        "beta",
+                        "els"
                     ]
                 },
                 "rhui": {
