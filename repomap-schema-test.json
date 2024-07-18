@@ -83,7 +83,7 @@
             ]
         },
         "version_format": {
-            "const": "1.1.0"
+            "const": "1.2.1"
         },
         "provided_data_streams": {
           "type": "array",
