@@ -4,7 +4,7 @@
     "type": "object",
     "title": "Repository Mapping Schema",
     "description": "Repository mapping for OS migrations",
-    "version": "1.2.1",
+    "version": "1.3.0",
     "required": [
         "datetime",
         "version_format",
@@ -15,7 +15,7 @@
     "examples": [
         {
           "datetime": "202107141655Z",
-          "version_format": "1.1.0",
+          "version_format": "1.3.0",
           "provided_data_streams": ["1.0", "2.0"],
           "mapping": [
             {
@@ -41,7 +41,8 @@
                   "repoid": "some-rhel-7-repoid",
                   "arch": "x86_64",
                   "repo_type": "rpm",
-                  "channel": "eus"
+                  "channel": "eus",
+                  "distro": "rhel"
                 }
               ]
             },
@@ -53,7 +54,8 @@
                   "repoid": "some-rhel-8-repoid1",
                   "arch": "x86_64",
                   "repo_type": "rpm",
-                  "channel": "eus"
+                  "channel": "eus",
+                  "distro": "rhel"
                 }
               ]
             },
@@ -62,10 +64,11 @@
               "entries": [
                 {
                   "major_version": "8",
-                  "repoid": "some-rhel-8-repoid2",
+                  "repoid": "some-centos-8-repoid2",
                   "arch": "x86_64",
                   "repo_type": "rpm",
-                  "channel": "eus"
+                  "channel": "eus",
+                  "distro": "centos"
                 }
               ]
             }
@@ -83,7 +86,7 @@
             ]
         },
         "version_format": {
-            "const": "1.2.1"
+            "const": "1.3.0"
         },
         "provided_data_streams": {
           "type": "array",
@@ -185,7 +188,8 @@
                                 "repoid": "some-rhel-7-repoid",
                                 "arch": "x86_64",
                                 "repo_type": "rpm",
-                                "channel": "ga"
+                                "channel": "ga",
+                                "distro": "rhel"
                             }
                         ]
                     }
@@ -232,7 +236,8 @@
                 "repoid",
                 "arch",
                 "repo_type",
-                "channel"
+                "channel",
+                "distro"
             ],
             "properties": {
                 "major_version": {
@@ -271,12 +276,14 @@
                     ]
                 },
                 "rhui": {
-                    "enum": [
-                        "alibaba",
-                        "aws",
-                        "azure",
-                        "google"
-                    ]
+                    "title": "The cloud ID where the repository is defined in RHUI.",
+                    "description": "This identifies the cloud where the repoid is defined. E.g. aws, azure, google, alibaba.",
+                    "type": "string"
+                },
+                "distro": {
+                    "title": "The Linux distribution ID.",
+                    "description": "The unique indentifier of Linux distribution specified in /etc/os-release as 'ID'. E.g. rhel, centos.",
+                    "type": "string"
                 }
             }
         }
