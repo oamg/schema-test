@@ -4,7 +4,7 @@
     "type": "object",
     "title": "Repository Mapping Schema",
     "description": "Repository mapping for OS migrations",
-    "version": "1.3.0",
+    "version": "2.0.0",
     "required": [
         "datetime",
         "version_format",
@@ -15,7 +15,7 @@
     "examples": [
         {
           "datetime": "202107141655Z",
-          "version_format": "1.3.0",
+          "version_format": "2.0.0",
           "provided_data_streams": ["1.0", "2.0"],
           "mapping": [
             {
@@ -24,10 +24,10 @@
               "entries": [
                 {
                   "source": "pesid1",
-                  "target": [
-                    "pesid2",
-                    "pesid3"
-                  ]
+                  "target": {
+                    "default": ["pesid2", "pesid3"],
+                    "centos": ["pesid4"]
+                  }
                 }
               ]
             }
@@ -86,7 +86,7 @@
             ]
         },
         "version_format": {
-            "const": "1.3.0"
+            "const": "2.0.0"
         },
         "provided_data_streams": {
           "type": "array",
@@ -115,10 +115,11 @@
                         "entries": [
                             {
                                 "source": "pesid1",
-                                "target": [
-                                    "pesid2",
-                                    "pesid3"
-                                ]
+                                "target": {
+                                    "default": ["pesid2"],
+                                    "rhel": ["pesid3"],
+                                    "centos": ["pesid4"]
+                                }
                             }
                         ]
                     }
@@ -151,10 +152,10 @@
                             "examples": [
                                 {
                                     "source": "pesid1",
-                                    "target": [
-                                        "pesid1",
-                                        "pesid2"
-                                    ]
+                                    "target": {
+                                        "default": ["pesid1", "pesid2"],
+                                        "centos": ["pesid3"]
+                                    }
                                 }
                             ],
                             "required": [
@@ -162,11 +163,22 @@
                                 "target"
                             ],
                             "properties": {
-                                "source_pesid": { "$ref": "#/$defs/pesid" },
-                                "target_pesids": {
-                                    "title": "The list of PES IDs of target repositories",
-                                    "type": "array",
-                                    "items": { "$ref": "#/$defs/pesid" }
+                                "source": { "$ref": "#/$defs/pesid" },
+                                "target": {
+                                    "type": "object",
+                                    "title": "The target repositories mapping per distro",
+                                    "description": "Map of target PES IDs keyed by 'default' or distro ID. 'default' is required as fallback; distro-specific keys override it.",
+                                    "required": ["default"],
+                                    "propertyNames": {
+                                        "anyOf": [
+                                            { "const": "default" },
+                                            { "$ref": "#/$defs/distro" }
+                                        ]
+                                    },
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": { "$ref": "#/$defs/pesid" }
+                                    }
                                 }
                             }
                         }
@@ -280,12 +292,13 @@
                     "description": "This identifies the cloud where the repoid is defined. E.g. aws, azure, google, alibaba.",
                     "type": "string"
                 },
-                "distro": {
-                    "title": "The Linux distribution ID.",
-                    "description": "The unique indentifier of Linux distribution specified in /etc/os-release as 'ID'. E.g. rhel, centos.",
-                    "type": "string"
-                }
+                "distro": { "$ref": "#/$defs/distro" }
             }
+        },
+        "distro": {
+            "title": "The Linux distribution ID.",
+            "description": "The unique identifier of Linux distribution specified in /etc/os-release as 'ID'. E.g. rhel, centos.",
+            "type": "string"
         }
     }
 }
