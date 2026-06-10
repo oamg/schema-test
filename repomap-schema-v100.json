@@ -1,0 +1,264 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The repository mapping schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "version": "1.0.0",
+    "required": [
+        "datetime",
+        "version_format",
+        "mapping",
+        "repositories"
+    ],
+    "examples": [
+        {
+          "datetime": "202107141655Z",
+          "version_format": "1.0.0",
+          "mapping": [
+            {
+              "source_major_version": "7",
+              "target_major_version": "8",
+              "entries": [
+                {
+                  "source": "pesid1",
+                  "target": [
+                    "pesid2",
+                    "pesid3"
+                  ]
+                }
+              ]
+            }
+          ],
+          "repositories": [
+            {
+              "pesid": "pesid1",
+              "entries": [
+                {
+                  "major_version": "7",
+                  "repoid": "some-rhel-7-repoid",
+                  "arch": "x86_64",
+                  "repo_type": "rpm",
+                  "channel": "eus"
+                }
+              ]
+            },
+            {
+              "pesid": "pesid2",
+              "entries": [
+                {
+                  "major_version": "8",
+                  "repoid": "some-rhel-8-repoid1",
+                  "arch": "x86_64",
+                  "repo_type": "rpm",
+                  "channel": "eus"
+                }
+              ]
+            },
+            {
+              "pesid": "pesid3",
+              "entries": [
+                {
+                  "major_version": "8",
+                  "repoid": "some-rhel-8-repoid2",
+                  "arch": "x86_64",
+                  "repo_type": "rpm",
+                  "channel": "eus"
+                }
+              ]
+            }
+          ]
+        }
+    ],
+    "properties": {
+        "datetime": {
+            "type": "string",
+            "title": "The datetime of the last data update.",
+            "description": "The expected format: YYYYMMDDhhmmZ (date -u \"+%Y%m%d%H%MZ\")",
+            "pattern": "^[0-9]{12}Z$",
+            "examples": [
+                "202107141655Z"
+            ]
+        },
+        "version_format": {
+            "const": "1.0.0"
+        },
+        "mapping": {
+            "type": "array",
+            "title": "The mapping of repositories between various major versions of RHEL.",
+            "description": "Each item contains mapping between different major versions of RHEL systems.",
+            "examples": [
+                [
+                    {
+                        "source_major_version": "7",
+                        "target_major_version": "8",
+                        "entries": [
+                            {
+                                "source": "pesid1",
+                                "target": [
+                                    "pesid2",
+                                    "pesid3"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            ],
+            "items": {
+                "type": "object",
+                "title": "The mapping of repositories between particular major versions of RHEL.",
+                "description": "E.g. mapping of between RHEL 7 and RHEL 8 repositories.",
+                "required": [
+                    "source_major_version",
+                    "target_major_version",
+                    "entries"
+                ],
+                "properties": {
+                    "source_major_version": {
+                        "title": "The major version of the system from which repositories are mapped.",
+                        "$ref": "#/$defs/major_version"
+                    },
+                    "target_major_version": {
+                        "title": "The major version of the system to which repositories are mapped.",
+                        "$ref": "#/$defs/major_version"
+                    },
+                    "entries": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "title": "Map between particular repositories (represented by PED IDs).",
+                            "description": "Map one source repository to M target repositories (represented by PES IDs).",
+                            "examples": [
+                                {
+                                    "source": "pesid1",
+                                    "target": [
+                                        "pesid1",
+                                        "pesid2"
+                                    ]
+                                }
+                            ],
+                            "required": [
+                                "source",
+                                "target"
+                            ],
+                            "properties": {
+                                "source_pesid": { "$ref": "#/$defs/pesid" },
+                                "target_pesids": {
+                                    "title": "The list of PES IDs of target repositories",
+                                    "type": "array",
+                                    "items": { "$ref": "#/$defs/pesid" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "repositories": {
+            "type": "array",
+            "title": "Repositories",
+            "description": "The list of all mapped repositories (includes various versions of RHEL).",
+            "examples": [
+                [
+                    {
+                        "pesid": "pesid1",
+                        "entries": [
+                            {
+                                "major_version": "7",
+                                "repoid": "some-rhel-7-repoid",
+                                "arch": "x86_64",
+                                "repo_type": "rpm",
+                                "channel": "ga"
+                            }
+                        ]
+                    }
+                ]
+            ],
+            "items": {
+                "type": "object",
+                "title": "Set of repositories represented by a PES ID.",
+                "description": "Contains all repositories that are referred by PES IDs used in the mapping.",
+                "required": [
+                    "pesid",
+                    "entries"
+                ],
+                "properties": {
+                    "pesid": { "$ref": "#/$defs/pesid" },
+                    "entries": {
+                        "type": "array",
+                        "items": { "$ref": "#/$defs/particular_repository" }
+                    }
+                }
+            }
+        }
+    },
+    "$defs": {
+        "pesid": {
+            "title": "The PES ID used in the PES database.",
+            "description": "The PES ID refers to a set of repositories which represent alternatives of one repository. E.g. BaseOS has a little different repository ID for every architecture, channel, ...",
+            "type": "string",
+            "examples": ["pesid1", "pesid2"]
+        },
+        "major_version": {
+            "title": "Major version of a system.",
+            "description": "The major version of the system is an integer represented as string. We choose the string as it's how we deal with versions in leapp actors usually.",
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "examples": ["7", "8", "9", "10"]
+        },
+        "particular_repository": {
+            "type": "object",
+            "title": "The particular repository.",
+            "description": "Contains crucial information about the particular repository - that is accessed by packages manager.",
+            "required": [
+                "major_version",
+                "repoid",
+                "arch",
+                "repo_type",
+                "channel"
+            ],
+            "properties": {
+                "major_version": {
+                    "title": "The major version of the system in which the repository is present.",
+                    "$ref": "#/$defs/major_version"
+                },
+                "repoid": {
+                    "title": "The repository ID.",
+                    "description": "The unique indentifier of the repository.",
+                    "type": "string"
+                },
+                "arch": {
+                    "enum": [
+                        "x86_64",
+                        "aarch64",
+                        "ppc64le",
+                        "s390x"
+                    ]
+                },
+                "repo_type": {
+                    "enum": [
+                        "rpm",
+                        "debug",
+                        "srpm"
+                    ]
+                },
+                "channel": {
+                    "enum": [
+                        "ga",
+                        "eus",
+                        "e4s",
+                        "aus",
+                        "tus",
+                        "beta"
+                    ]
+                },
+                "rhui": {
+                    "enum": [
+                        "aws",
+                        "azure"
+                    ]
+                }
+            }
+        }
+    }
+}
